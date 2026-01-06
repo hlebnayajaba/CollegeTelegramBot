@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F0EBBBBA-5DFD-4EE7-9304-ECEC0F87EA34}|TeleBotMain.pyproj|C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\TeleBotMain.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{F0EBBBBA-5DFD-4EE7-9304-ECEC0F87EA34}|TeleBotMain.pyproj|solutionrelative:TeleBotMain.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TeleBotMain.py",
+              "DocumentMoniker": "C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\TeleBotMain.py",
+              "RelativeDocumentMoniker": "TeleBotMain.py",
+              "ToolTip": "C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\TeleBotMain.py",
+              "RelativeToolTip": "TeleBotMain.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2026-01-06T08:53:51.232Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
