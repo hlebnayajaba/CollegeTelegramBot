@@ -50,6 +50,28 @@ def checked_homework():
     else:
         return df
 
+#посещаемость по преподавателям
+def attendance_by_teachers():
+    df = get_info("Посещаемость по преподавателям.xlsx")
+    if type(df)!=str:
+        result_lines = []
+        for index, row in df.iloc[2:].iterrows():
+            if pd.notna(row.iloc[0]) and row.iloc[0].strip() !="":
+                teacher_name = row.iloc[0]
+                attendance_str = row.iloc[10]
+                if isinstance(attendance_str, str):
+                    attendance_str = attendance_str.replace('%', '').strip()
+                    try:
+                        average_attendance = float(attendance_str)
+                    except ValueError:
+                        continue
+                else:
+                    average_attendance = float(attendance_str)
+                if average_attendance < 40:
+                    result_lines.append(f"{teacher_name}: {average_attendance}%")
+        return "\n".join(result_lines)
+    else:
+        return df
 
 
 @bot.message_handler(content_types=['text', 'document'])
@@ -67,10 +89,13 @@ def get_text_messages(message):
     elif message.text == "/info":
         bot.send_message(message.from_user.id, "Это бот для учебной части колледжа IT Top. На данный момент функционал в процессе разработки.")
     elif message.text == "/help":
-        bot.send_message(message.from_user.id, "Список доступных команд: \n/info - информация о боте. \n/help - список доступных команд.\n/checked_homework - получить отчет по проверяемым домашним заданиям.")
+        bot.send_message(message.from_user.id, "Список доступных команд: \n/info - информация о боте. \n/help - список доступных команд.\n/checked_homework - получить отчет по проверяемым домашним заданиям. \n /attendance_by_teachers - получить отчет по посещаемости среди преподавателей")
     elif message.text == "/checked_homework":
         bot.send_message(message.from_user.id, "Получаем данные...")
         bot.send_message(message.from_user.id, "Преподаватели с низкой проверяемостью домашних заданий: "+checked_homework());
+    elif message.text == "/attendance_by_teachers":
+        bot.send_message(message.from_user.id, "Получаем данные...")
+        bot.send_message(message.from_user.id, "Преподаватели с низкой посещаемостью: "+attendance_by_teachers());
     else:
         bot.send_message(message.from_user.id, "Напишите /help, чтобы получить список команд.")
 
