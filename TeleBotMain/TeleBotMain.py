@@ -9,12 +9,8 @@ EXCEL_EXTENSIONS = ['.xls', '.xlsx', '.xlsm', '.xlsb', '.xltx', '.xltm', '.xlam'
 #функция для извлечения данных из таблиц
 def get_info(filename):
     try:
-        file_ext = os.path.splitext(filename)[1].lower()
         file_path = os.path.join("Sheets", filename)
-        if file_ext == '.xls':
-            df = pd.read_excel(file_path, engine='xlrd')
-        else:
-            df = pd.read_excel(file_path, engine='openpyxl')
+        df = pd.read_excel(file_path)
 
         if df.dropna(how='all').empty:
             return "Файл открывается, но все ячейки пустые"
@@ -73,6 +69,48 @@ def attendance_by_teachers():
     else:
         return df
 
+#оценки студентов
+def student_review():
+    df = get_info("Отчет по студентам.xls")
+    if type(df)!=str:
+        result_lines = []
+        for index, row in df.iloc[1:].iterrows():
+            if pd.notna(row.iloc[0]) and row.iloc[0].strip() !="":
+                student_name = row.iloc[0]
+                homework_score = row.iloc[15]
+                class_score = row.iloc[16]
+                if homework_score == 1 or class_score <= 3:
+                    result_lines.append(f"{student_name}: Средняя оценка за домашнюю работу: {homework_score}, за классную работу: {class_score}")
+        return "\n".join(result_lines)
+    else:
+        return df
+
+#выполненные домашки
+def completed_homeworks():
+    df = get_info("Отчет по студентам.xls")
+    if type(df)!=str:
+        result_lines = []
+        for index, row in df.iloc[1:].iterrows():
+            if pd.notna(row.iloc[0]) and row.iloc[0].strip() !="":
+                student_name = row.iloc[0]
+                homework_percent = row.iloc[19]
+                if homework_percent <= 70:
+                    result_lines.append(f"{student_name}: {homework_percent}%")
+        return "\n".join(result_lines)
+    else:
+        return df
+
+# Функция для разбивки длинных сообщений на части
+def split_message(message, max_length=4000):
+    parts = []
+    while len(message) > max_length:
+        split_index = message.rfind('\n', 0, max_length)
+        if split_index == -1:
+            split_index = max_length
+        parts.append(message[:split_index])
+        message = message[split_index:].lstrip()
+    parts.append(message)
+    return parts
 
 @bot.message_handler(content_types=['text', 'document'])
 def get_text_messages(message):
@@ -89,16 +127,32 @@ def get_text_messages(message):
     elif message.text == "/info":
         bot.send_message(message.from_user.id, "Это бот для учебной части колледжа IT Top. На данный момент функционал в процессе разработки.")
     elif message.text == "/help":
-        bot.send_message(message.from_user.id, "Список доступных команд: \n/info - информация о боте. \n/help - список доступных команд.\n/checked_homework - получить отчет по проверяемым домашним заданиям. \n /attendance_by_teachers - получить отчет по посещаемости среди преподавателей")
+        bot.send_message(message.from_user.id, "Список доступных команд: \n/info - информация о боте. \n/help - список доступных команд.\n/checked_homework - получить отчет по проверяемым домашним заданиям. \n /attendance_by_teachers - получить отчет по посещаемости среди преподавателей \n/student_review - получить отчет по успеваемости студентов\n/completed_homeworks - получить отчет по выполненным домашним заданиям")
     elif message.text == "/checked_homework":
         bot.send_message(message.from_user.id, "Получаем данные...")
-        bot.send_message(message.from_user.id, "Преподаватели с низкой проверяемостью домашних заданий: "+checked_homework());
+        result = checked_homework()
+        parts = split_message(f"Преподаватели с низкой проверяемостью домашних заданий:\n{result}")
+        for part in parts:
+            bot.send_message(message.from_user.id, part)
     elif message.text == "/attendance_by_teachers":
         bot.send_message(message.from_user.id, "Получаем данные...")
-        bot.send_message(message.from_user.id, "Преподаватели с низкой посещаемостью: "+attendance_by_teachers());
+        result = attendance_by_teachers()
+        parts = split_message(f"Преподаватели с низкой посещаемостью:\n{result}")
+        for part in parts:
+            bot.send_message(message.from_user.id, part)
+    elif message.text == "/student_review":
+        bot.send_message(message.from_user.id, "Получаем данные...")
+        result = student_review()
+        parts = split_message(f"Студенты с низкой успеваемостью:\n{result}")
+        for part in parts:
+            bot.send_message(message.from_user.id, part)
+    elif message.text == "/completed_homeworks":
+        bot.send_message(message.from_user.id, "Получаем данные...")
+        result = completed_homeworks()
+        parts = split_message(f"Студенты с низким количеством выполненных домашних заданий:\n{result}")
+        for part in parts:
+            bot.send_message(message.from_user.id, part)
     else:
         bot.send_message(message.from_user.id, "Напишите /help, чтобы получить список команд.")
-
-
 
 bot.polling(none_stop=True, interval=0)
