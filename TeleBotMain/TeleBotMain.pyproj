@@ -25,7 +25,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BotFunctions.py" />
+    <Compile Include="Config.py" />
     <Compile Include="TeleBotMain.py" />
+    <Compile Include="ExcelUtils.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Sheets\" />

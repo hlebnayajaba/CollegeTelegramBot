@@ -2,203 +2,19 @@
 from pickle import NONE
 import telebot
 import os
-import pandas as pd
 import io
+from Config import BOT_TOKEN, EXCEL_EXTENSIONS, CATEGORY_MAP, CATEGORY_FILES
+from ExcelUtils import get_info, update_info
+from BotFunctions import (
+    checked_homework, attendance_by_teachers, student_review,
+    completed_homeworks, lesson_themes, check_schedule, split_message
+)
 
-bot = telebot.TeleBot('8497231406:AAE7bNFUgkzgTS4t5tzrEBB26CrKZ8dG96o')
+bot = telebot.TeleBot(BOT_TOKEN)
 
 user_states = {}
 user_data = {} 
-EXCEL_EXTENSIONS = ['.xls', '.xlsx', '.xlsm', '.xlsb', '.xltx', '.xltm', '.xlam', '.xla', '.xlw']
-#функция для извлечения данных из таблиц
-def get_info(filename):
-    try:
-        file_path = os.path.join("Sheets", filename)
-        df = pd.read_excel(file_path)
 
-        if df.dropna(how='all').empty:
-            return "Файл открывается, но все ячейки пустые"
-        else:
-            return df
-    except Exception as e:
-        return f"Ошибка при чтении файла: {str(e)}"
-
-#функция для обновления информации
-def update_info(file_bytes, file_path):
-    try:
-        directory = os.path.dirname(file_path)
-        if directory and not os.path.exists(directory):
-            os.makedirs(directory, exist_ok=True)
-        with open(file_path, 'wb') as f:
-            f.write(file_bytes)        
-        return f"Файл успешно сохранен по пути: {file_path}"
-    except Exception as e:
-        return f"Ошибка при сохранении файла: {str(e)}"
-
-#домашки, проверенные учителями
-def checked_homework():
-    df = get_info("Отчет по домашним заданиям.xlsx")
-    if type(df) != str:
-        result_lines = []        
-        for index, row in df.iloc[2:].iterrows():
-            if pd.notna(row.iloc[1]) and row.iloc[1].strip() != "":
-                teacher_name = row.iloc[1]
-                month_checked = row.iloc[5]  
-                month_plan = row.iloc[6]    
-                week_checked = row.iloc[10]  
-                week_plan = row.iloc[11]     
-                if pd.notna(month_checked) and pd.notna(month_plan) and month_plan != 0:
-                    month_percent = (month_checked / month_plan) * 100
-                else:
-                    month_percent = 0
-                
-                if pd.notna(week_checked) and pd.notna(week_plan) and week_plan != 0:
-                    week_percent = (week_checked / week_plan) * 100
-                else:
-                    week_percent = 0
-                if month_percent < 70 or week_percent < 70:
-                    result_lines.append(f"{teacher_name}: месяц {month_percent:.2f}%, неделя {week_percent:.2f}%")          
-        return "\n".join(result_lines)
-    else:
-        return df
-
-#посещаемость по преподавателям
-def attendance_by_teachers():
-    df = get_info("Посещаемость по преподавателям.xlsx")
-    if type(df)!=str:
-        result_lines = []
-        for index, row in df.iloc[2:].iterrows():
-            if pd.notna(row.iloc[0]) and row.iloc[0].strip() !="":
-                teacher_name = row.iloc[0]
-                attendance_str = row.iloc[10]
-                if isinstance(attendance_str, str):
-                    attendance_str = attendance_str.replace('%', '').strip()
-                    try:
-                        average_attendance = float(attendance_str)
-                    except ValueError:
-                        continue
-                else:
-                    average_attendance = float(attendance_str)
-                if average_attendance < 40:
-                    result_lines.append(f"{teacher_name}: {average_attendance}%")
-        return "\n".join(result_lines)
-    else:
-        return df
-
-#оценки студентов
-def student_review():
-    df = get_info("Отчет по студентам.xls")
-    if type(df)!=str:
-        result_lines = []
-        for index, row in df.iloc[1:].iterrows():
-            if pd.notna(row.iloc[0]) and row.iloc[0].strip() !="":
-                student_name = row.iloc[0]
-                homework_score = row.iloc[15]
-                class_score = row.iloc[16]
-                if homework_score == 1 or class_score <= 3:
-                    result_lines.append(f"{student_name}: Средняя оценка за домашнюю работу: {homework_score}, за классную работу: {class_score}")
-        return "\n".join(result_lines)
-    else:
-        return df
-
-#выполненные домашки
-def completed_homeworks():
-    df = get_info("Отчет по студентам.xls")
-    if type(df)!=str:
-        result_lines = []
-        for index, row in df.iloc[1:].iterrows():
-            if pd.notna(row.iloc[0]) and row.iloc[0].strip() !="":
-                student_name = row.iloc[0]
-                homework_percent = row.iloc[19]
-                if homework_percent <= 70:
-                    result_lines.append(f"{student_name}: {homework_percent}%")
-        return "\n".join(result_lines)
-    else:
-        return df
-
-#темы уроков
-def lesson_themes():
-    df = get_info("Темы уроков.xls")
-    if type(df)!=str:
-        result_lines = []
-        for index, row in df.iloc[1:].iterrows():
-            if pd.notna(row.iloc[0]) and row.iloc[0].strip() !="":
-                lesson_date = row.iloc[0]
-                group_num = row.iloc[3]
-                teacher_name = row.iloc[4]
-                lesson_topic = row.iloc[5]
-                if lesson_topic.startswith('Урок №') and 'Тема:' in lesson_topic:
-                    continue               
-                result_lines.append(f"Дата: {lesson_date}. Группа: {group_num}. Имя преподавателя: {teacher_name}. Тема занятия: {lesson_topic}.")
-        return "\n".join(result_lines)
-    else:
-        return df
-
-def check_schedule(group_name):
-    file_group_name = group_name.replace("/", "-")
-    schedule_file = None
-    
-    for ext in EXCEL_EXTENSIONS:
-        file_path = os.path.join("Sheets", "Расписание групп", f"{file_group_name}{ext}")
-        if os.path.exists(file_path):
-            schedule_file = f"Расписание групп/{file_group_name}{ext}"
-            break
-
-    if not schedule_file:
-        return "Расписание для указанной группы не найдено."
-    else:
-        df = get_info(schedule_file)
-        if type(df) != str:
-            subject_list = {}
-            weekdays = [3, 5, 7, 9, 11, 13]
-            
-            for index, row in df.iterrows():
-                if pd.isna(row.iloc[1]) or row.iloc[1] == 0:
-                    continue
-                
-                for day in weekdays:
-                    if day < len(row):
-                        lesson_cell = row.iloc[day]
-                        if pd.isna(lesson_cell) or str(lesson_cell).strip() == "":
-                            continue
-                        
-                        lesson_text = str(lesson_cell)
-                        if "Предмет:" in lesson_text:
-                            start_idx = lesson_text.find("Предмет:") + len("Предмет:")
-                            if start_idx < len(lesson_text) and lesson_text[start_idx] == " ":
-                                start_idx += 1
-                            
-                            end_idx = lesson_text.find("<br>", start_idx)
-                            if end_idx == -1:
-                                end_idx = len(lesson_text)
-                            
-                            subject_name = lesson_text[start_idx:end_idx].strip()
-                            
-                            if subject_name in subject_list:
-                                subject_list[subject_name] += 1
-                            else:
-                                subject_list[subject_name] = 1
-            
-            result_lines = []
-            for subject, count in sorted(subject_list.items()):
-                result_lines.append(f"{subject}: {count} пар")
-            
-            return "\n".join(result_lines)
-        else:
-            return df
-
-
-#функция для разбивки длинных сообщений на части
-def split_message(message, max_length=4000):
-    parts = []
-    while len(message) > max_length:
-        split_index = message.rfind('\n', 0, max_length)
-        if split_index == -1:
-            split_index = max_length
-        parts.append(message[:split_index])
-        message = message[split_index:].lstrip()
-    parts.append(message)
-    return parts
 
 @bot.message_handler(content_types=['text', 'document'])
 def get_text_messages(message):
@@ -232,7 +48,7 @@ def get_text_messages(message):
                         'темы уроков': 'Темы уроков.xls',
                         'посещаемость по преподавателям': 'Посещаемость по преподавателям.xlsx'
                     }
-                    file_name = category_files.get(category, 'uploaded_file.xlsx')
+                    file_name = CATEGORY_FILES.get(category, 'uploaded_file.xlsx')
                     save_path = os.path.join("Sheets", file_name)
                 result = update_info(downloaded_file, save_path)
                 bot.send_message(message.from_user.id, f"Файл '{message.document.file_name}' принят.\n{result}")
@@ -244,11 +60,8 @@ def get_text_messages(message):
         else:
             bot.send_message(message.from_user.id, "Сначала используйте команду /send_data для начала загрузки файла.")
 
-    elif message.text == "/info":
-        bot.send_message(message.from_user.id, "Это бот для учебной части колледжа IT Top. На данный момент функционал в процессе разработки.")
-
     elif message.text == "/help":
-        bot.send_message(message.from_user.id, "Список доступных команд: \n/info - информация о боте. \n/help - список доступных команд.\n/checked_homework - получить отчет по проверяемым домашним заданиям. \n /attendance_by_teachers - получить отчет по посещаемости среди преподавателей \n/student_review - получить отчет по успеваемости студентов\n/completed_homeworks - получить отчет по выполненным домашним заданиям\n/lesson_themes - получить отчет по неправильно написанным темам.\n/check_schedule - проверить расписание для группы\n/send_data - отправить файл с данными\n/cancel - отменить текущую операцию")
+        bot.send_message(message.from_user.id, "Список доступных команд: \n/help - список доступных команд.\n/checked_homework - получить отчет по проверяемым домашним заданиям. \n /attendance_by_teachers - получить отчет по посещаемости среди преподавателей \n/student_review - получить отчет по успеваемости студентов\n/completed_homeworks - получить отчет по выполненным домашним заданиям\n/lesson_themes - получить отчет по неправильно написанным темам.\n/check_schedule - проверить расписание для группы\n/send_data - отправить файл с данными\n/cancel - отменить текущую операцию")
 
     elif message.text == "/check_schedule":
         user_states[message.from_user.id] = 'waiting_for_group_name'
@@ -299,7 +112,7 @@ def get_text_messages(message):
         bot.send_message(message.from_user.id, "Получаем данные...")
         result = lesson_themes()
         if result and result.strip():
-            parts = split_message(f"Темы уроков, не подходящие под формат:{result}")
+            parts = split_message(f"Темы уроков, не подходящие под формат:\n{result}")
             for part in parts:
                 bot.send_message(message.from_user.id, part)
 
@@ -309,23 +122,7 @@ def get_text_messages(message):
     
     elif user_states[message.from_user.id] == 'waiting_for_category' and message.text:
         category_input = message.text.strip().lower()        
-        category_map = {
-            '1': 'отчет по студентам',
-            '2': 'отчет по домашним заданиям у преподавателей', 
-            '3': 'темы уроков',
-            '4': 'посещаемость по преподавателям',
-            '5': 'расписание групп',
-            'отчет по студентам': 'отчет по студентам',
-            'отчет по домашним заданиям': 'отчет по домашним заданиям у преподавателей',
-            'отчет по домашним заданиям у преподавателей': 'отчет по домашним заданиям у преподавателей',
-            'темы уроков': 'темы уроков',
-            'посещаемость': 'посещаемость по преподавателям',
-            'посещаемость по преподавателям': 'посещаемость по преподавателям',
-            'расписание': 'расписание групп',
-            'расписание групп': 'расписание групп'
-        }
-        
-        category = category_map.get(category_input)
+        category = CATEGORY_MAP.get(category_input)
         if category:
             user_data[message.from_user.id]['category'] = category
             
