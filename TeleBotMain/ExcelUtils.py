@@ -1,6 +1,6 @@
 ﻿import os
 import pandas as pd
-
+#получение данных из файла
 def get_info(filename, sheets_dir="Sheets"):
     try:
         file_path = os.path.join(sheets_dir, filename)
@@ -12,7 +12,7 @@ def get_info(filename, sheets_dir="Sheets"):
             return df
     except Exception as e:
         return f"Ошибка при чтении файла: {str(e)}"
-
+#сохранение данных в файл
 def update_info(file_bytes, file_path):
     try:
         directory = os.path.dirname(file_path)

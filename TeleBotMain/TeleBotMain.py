@@ -54,6 +54,7 @@ def get_text_messages(message):
                 bot.send_message(message.from_user.id, f"Файл '{message.document.file_name}' принят.\n{result}")
                 user_states[message.from_user.id] = None
                 user_data[message.from_user.id] = {}
+                bot.send_message(message.from_user.id, "Напишите /help, чтобы получить список команд.")
                 
             except Exception as e:
                 bot.send_message(message.from_user.id, f"Ошибка при обработке файла: {str(e)}")
@@ -67,7 +68,7 @@ def get_text_messages(message):
         user_states[message.from_user.id] = 'waiting_for_group_name'
         bot.send_message(message.from_user.id, "Введите название группы (например: 9/3-РПО-23/2) или /cancel, чтобы отменить операцию:")
     
-    elif user_states[message.from_user.id] == 'waiting_for_group_name' and message.text:
+    elif user_states[message.from_user.id] == 'waiting_for_group_name' and message.text!='/cancel':
         group_name = message.text.strip()
         bot.send_message(message.from_user.id, f"Получаем расписание для группы {group_name}...")
         
@@ -79,6 +80,7 @@ def get_text_messages(message):
         
         user_states[message.from_user.id] = None
         user_data[message.from_user.id] = {}
+        bot.send_message(message.from_user.id, "Напишите /help, чтобы получить список команд.")
 
     elif message.text == "/checked_homework":
         bot.send_message(message.from_user.id, "Получаем данные...")
@@ -86,6 +88,7 @@ def get_text_messages(message):
         parts = split_message(f"Преподаватели с низкой проверяемостью домашних заданий:\n{result}")
         for part in parts:
             bot.send_message(message.from_user.id, part)
+        bot.send_message(message.from_user.id, "Напишите /help, чтобы получить список команд.")
 
     elif message.text == "/attendance_by_teachers":
         bot.send_message(message.from_user.id, "Получаем данные...")
@@ -93,6 +96,7 @@ def get_text_messages(message):
         parts = split_message(f"Преподаватели с низкой посещаемостью:\n{result}")
         for part in parts:
             bot.send_message(message.from_user.id, part)
+        bot.send_message(message.from_user.id, "Напишите /help, чтобы получить список команд.")
 
     elif message.text == "/student_review":
         bot.send_message(message.from_user.id, "Получаем данные...")
@@ -100,6 +104,7 @@ def get_text_messages(message):
         parts = split_message(f"Студенты с низкой успеваемостью:\n{result}")
         for part in parts:
             bot.send_message(message.from_user.id, part)
+        bot.send_message(message.from_user.id, "Напишите /help, чтобы получить список команд.")
 
     elif message.text == "/completed_homeworks":
         bot.send_message(message.from_user.id, "Получаем данные...")
@@ -107,6 +112,7 @@ def get_text_messages(message):
         parts = split_message(f"Студенты с низким количеством выполненных домашних заданий:\n{result}")
         for part in parts:
             bot.send_message(message.from_user.id, part)
+        bot.send_message(message.from_user.id, "Напишите /help, чтобы получить список команд.")
 
     elif message.text == "/lesson_themes":
         bot.send_message(message.from_user.id, "Получаем данные...")
@@ -115,12 +121,13 @@ def get_text_messages(message):
             parts = split_message(f"Темы уроков, не подходящие под формат:\n{result}")
             for part in parts:
                 bot.send_message(message.from_user.id, part)
+        bot.send_message(message.from_user.id, "Напишите /help, чтобы получить список команд.")
 
     elif message.text == "/send_data":
         user_states[message.from_user.id] = 'waiting_for_category'
         bot.send_message(message.from_user.id, "Выберите категорию файла:\n1. Отчет по студентам\n2. Отчет по домашним заданиям у преподавателей\n3. Темы уроков\n4. Посещаемость по преподавателям\n5. Расписание групп\nВведите номер категории или ее название, либо /cancel, чтобы отменить операцию.")
     
-    elif user_states[message.from_user.id] == 'waiting_for_category' and message.text:
+    elif user_states[message.from_user.id] == 'waiting_for_category' and message.text!='/cancel':
         category_input = message.text.strip().lower()        
         category = CATEGORY_MAP.get(category_input)
         if category:
@@ -135,7 +142,7 @@ def get_text_messages(message):
         else:
             bot.send_message(message.from_user.id, "Неверный выбор категории. Пожалуйста, введите номер от 1 до 5 или название категории.")
     
-    elif user_states[message.from_user.id] == 'waiting_for_group_for_schedule' and message.text:
+    elif user_states[message.from_user.id] == 'waiting_for_group_for_schedule' and message.text!='/cancel':
         group_name = message.text.strip()
         user_data[message.from_user.id]['group_name'] = group_name
         user_states[message.from_user.id] = 'waiting_for_file'
@@ -145,7 +152,8 @@ def get_text_messages(message):
         user_states[message.from_user.id] = None
         user_data[message.from_user.id] = {}
         bot.send_message(message.from_user.id, "Операция отменена.")
-        return
+        bot.send_message(message.from_user.id, "Напишите /help, чтобы получить список команд.")
+        return       
 
     else:
         bot.send_message(message.from_user.id, "Напишите /help, чтобы получить список команд.")

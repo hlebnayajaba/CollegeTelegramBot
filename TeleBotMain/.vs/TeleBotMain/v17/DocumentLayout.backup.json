@@ -7,16 +7,16 @@
       "RelativeMoniker": "D:0:0:{F0EBBBBA-5DFD-4EE7-9304-ECEC0F87EA34}|TeleBotMain.pyproj|solutionrelative:BotFunctions.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F0EBBBBA-5DFD-4EE7-9304-ECEC0F87EA34}|TeleBotMain.pyproj|C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\TeleBotMain.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{F0EBBBBA-5DFD-4EE7-9304-ECEC0F87EA34}|TeleBotMain.pyproj|solutionrelative:TeleBotMain.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{F0EBBBBA-5DFD-4EE7-9304-ECEC0F87EA34}|TeleBotMain.pyproj|C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\ExcelUtils.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{F0EBBBBA-5DFD-4EE7-9304-ECEC0F87EA34}|TeleBotMain.pyproj|solutionrelative:ExcelUtils.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F0EBBBBA-5DFD-4EE7-9304-ECEC0F87EA34}|TeleBotMain.pyproj|C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\Config.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{F0EBBBBA-5DFD-4EE7-9304-ECEC0F87EA34}|TeleBotMain.pyproj|solutionrelative:Config.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F0EBBBBA-5DFD-4EE7-9304-ECEC0F87EA34}|TeleBotMain.pyproj|C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\TeleBotMain.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{F0EBBBBA-5DFD-4EE7-9304-ECEC0F87EA34}|TeleBotMain.pyproj|solutionrelative:TeleBotMain.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -36,27 +36,27 @@
               "RelativeDocumentMoniker": "BotFunctions.py",
               "ToolTip": "C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\BotFunctions.py",
               "RelativeToolTip": "BotFunctions.py",
-              "ViewState": "AgIAAE4AAAAAAAAAAAAAwF8AAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAF8AAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2026-01-25T13:46:33.147Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "ExcelUtils.py",
               "DocumentMoniker": "C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\ExcelUtils.py",
               "RelativeDocumentMoniker": "ExcelUtils.py",
               "ToolTip": "C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\ExcelUtils.py",
               "RelativeToolTip": "ExcelUtils.py",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAnAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2026-01-25T13:45:40.31Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "Config.py",
               "DocumentMoniker": "C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\Config.py",
               "RelativeDocumentMoniker": "Config.py",
@@ -69,13 +69,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "TeleBotMain.py",
               "DocumentMoniker": "C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\TeleBotMain.py",
               "RelativeDocumentMoniker": "TeleBotMain.py",
               "ToolTip": "C:\\Users\\artem\\Documents\\GitHub\\CollegeTelegramBot\\TeleBotMain\\TeleBotMain.py",
               "RelativeToolTip": "TeleBotMain.py",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAfAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIEAAABgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2026-01-06T08:53:51.232Z",
               "EditorCaption": ""
